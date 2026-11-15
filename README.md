@@ -30,10 +30,10 @@ The key technical requirement is **preventing double-booking** of the same docto
  Item | Assumed value 
 
  Expected users | [e.g. 5,000 monthly active patients] 
- Peak usage | [e.g. 9–11 AM and evenings] 
+ Peak usage | [e.g. 9–11 AM] 
  Target availability | [e.g. 99.9%]
  Online payments | [out of scope for this version / in scope]
- Region | [e.g. me-central-1 or eu-central-1, based on proximity and compliance]
+ Region | [eu-central-1, based on proximity and compliance]
  Data sensitivity | Personal medical data requiring encryption and auditing 
 
 ## 3. Architecture Diagram
@@ -65,14 +65,14 @@ The key technical requirement is **preventing double-booking** of the same docto
 
 ### VPC Endpoints
 - **S3 Gateway Endpoint:** private access to S3 without going through NAT, at no additional cost.
-- **Interface Endpoints (PrivateLink):** for services such as SQS, SNS, ECR, CloudWatch Logs, Secrets Manager, and KMS `[choose only the ones actually needed to control cost]`.
+- **Interface Endpoints (PrivateLink):** for services such as SQS, SNS, ECR, CloudWatch Logs, Secrets Manager, and KMS.
 
 ### Auto Scaling
 - **ECS Service Auto Scaling** (Application Auto Scaling) with target tracking policies:
   - Average CPU at `[60%]`.
   - `ALBRequestCountPerTarget` at `[value determined after load testing]`.
 - Minimum 3 tasks (one per AZ) and maximum `[6]`.
-- Optional scheduled scaling `[optional]` to add capacity during peak hours.
+-  scheduled scaling to add capacity during peak hours.
 - **RDS Storage Auto Scaling** enabled, with the option to add a Read Replica if read traffic grows.
 
 ## 5. Design Decisions
@@ -91,7 +91,7 @@ The key technical requirement is **preventing double-booking** of the same docto
 ## 6. Mapping to the Six Well-Architected Pillars
 
 **Operational Excellence**
-CloudWatch Logs and Alarms for monitoring, CloudTrail for auditing, CI/CD for deployments `[e.g. CodePipeline or GitHub Actions]`, and infrastructure defined as code `[optional]`.
+CloudWatch Logs and Alarms for monitoring, CloudTrail for auditing, CI/CD for deployments `[e.g. CodePipeline or GitHub Actions]`, and infrastructure defined as code `[]`.
 
 **Security**
 - Least privilege through IAM roles, with no long-lived access keys.
